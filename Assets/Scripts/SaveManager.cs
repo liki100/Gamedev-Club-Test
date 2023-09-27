@@ -54,15 +54,14 @@ public class SaveManager : MonoBehaviour
             return;
 
         var character = ServiceLocator.Current.Get<Character>();
-        character.transform.position = worldData.CharacterData.Position;
-        character.SetHealth(worldData.CharacterData.Health);
-        character.Init();
+        character.SetData(worldData.CharacterData);
 
         var spawner = ServiceLocator.Current.Get<Spawner>();
         spawner.DeleteMonsters();
         foreach (var monsterData in worldData.MonstersData)
         {
-            spawner.CreateMonsters(monsterData.Position, monsterData.Target ? character : null, monsterData.Health);
+            var target = monsterData.Target ? character : null;
+            spawner.CreateMonsters(monsterData, target);
         }
         
         var inventory = character.Inventory;
@@ -80,8 +79,7 @@ public class SaveManager : MonoBehaviour
         uiInventory.Init();
 
         var weapon = ServiceLocator.Current.Get<RangeWeapon>();
-        var weaponData = worldData.WeaponData;
-        weapon.SetData(weaponData.Ammo, weaponData.FireRateTime);
+        weapon.SetData(worldData.WeaponData);
     }
     
     public void Save()

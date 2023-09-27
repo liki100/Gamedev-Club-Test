@@ -59,12 +59,11 @@ public class Spawner : MonoBehaviour, IService
         _monsters.Clear();
     }
 
-    public void CreateMonsters(Vector3 position, Character target, float health)
+    public void CreateMonsters(SaveManager.MonsterData data, Character character)
     {
-        var monster = Instantiate(_monsterTemplate, position, Quaternion.identity, transform);
+        var monster = Instantiate(_monsterTemplate, data.Position, Quaternion.identity, transform);
         monster.OnDiedEvent += OnDied;
-        monster.SetData(health, target);
-        monster.Init();
+        monster.SetData(data, character);
         _monsters.Add(monster);
     }
 

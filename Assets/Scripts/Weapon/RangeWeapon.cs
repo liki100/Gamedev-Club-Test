@@ -91,10 +91,10 @@ public class RangeWeapon : MonoBehaviour, IService
         _isShooting = isShooting;
     }
 
-    public void SetData(int ammo, float fireRateTime)
+    public void SetData(SaveManager.WeaponData data)
     {
-        _currentAmmo = ammo;
-        _currentFireRateTime = fireRateTime;
+        _currentAmmo = data.Ammo;
+        _currentFireRateTime = data.FireRateTime;
         _eventBus.Invoke(new AmmoChangedSignal(_currentAmmo, _data.Ammo));
     }
 }

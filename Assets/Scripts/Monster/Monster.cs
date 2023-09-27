@@ -24,10 +24,7 @@ public class Monster : MonoBehaviour, IDamageable
 
     public void Init()
     {
-        if (_currentHealth == 0)
-        {
-            _currentHealth = _health;
-        }
+        _currentHealth = _health;
         OnHealthChangedEvent?.Invoke(_currentHealth/_health);
     }
     
@@ -101,9 +98,10 @@ public class Monster : MonoBehaviour, IDamageable
         item.SetAmount(rAmount);
     }
 
-    public void SetData(float health, Character target)
+    public void SetData(SaveManager.MonsterData data, Character target)
     {
-        _currentHealth = health;
+        _currentHealth = data.Health;
         _target = target;
+        OnHealthChangedEvent?.Invoke(_currentHealth/_health);
     }
 }

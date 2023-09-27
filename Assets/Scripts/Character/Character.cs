@@ -21,11 +21,7 @@ public class Character : MonoBehaviour, IDamageable, IService
 
     public void Init()
     {
-        gameObject.SetActive(true);
-        if (_currentHealth == 0)
-        {
-            _currentHealth = _health;
-        }
+        _currentHealth = _health;
         _inventory = new Inventory(_capacityInventory);
         _eventBus = ServiceLocator.Current.Get<EventBus>();
         _eventBus.Invoke(new HealthChangedSignal(_currentHealth/_health));
@@ -49,8 +45,10 @@ public class Character : MonoBehaviour, IDamageable, IService
         }
     }
 
-    public void SetHealth(float health)
+    public void SetData(SaveManager.CharacterData data)
     {
-        _currentHealth = health;
+        transform.position = data.Position;
+        _currentHealth = data.Health;
+        _eventBus.Invoke(new HealthChangedSignal(_currentHealth/_health));
     }
 }

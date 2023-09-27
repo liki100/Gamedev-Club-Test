@@ -31,10 +31,11 @@ public class UIInventory : MonoBehaviour, IService
         var allSlotsCount = allSlots.Length;
         for (var i = 0; i < allSlotsCount; i++)
         {
-            var slot = allSlots[i];
-            var uiSlot = _uiSlots[i];
+            var index = i;
+            var slot = allSlots[index];
+            var uiSlot = _uiSlots[index];
             uiSlot.SetSlot(slot);
-            uiSlot.Button.onClick.AddListener(() => OnSelected(uiSlot));
+            uiSlot.Button.onClick.AddListener(() => OnSelected(index));
             uiSlot.Refresh();
         }
     }
@@ -63,17 +64,16 @@ public class UIInventory : MonoBehaviour, IService
         _inventoryCountText.text = $"{_inventory.GetAllSlotIsNotEmpty().Length}/{_inventory.Capacity}";
         _deleteButton.interactable = false;
     }
-    
-    private void OnSelected(UIInventorySlot uiSlot)
+
+    private void OnSelected(int index)
     {
         _deleteButton.interactable = true;
-        var id = uiSlot.Slot.ItemId;
-        _deleteButton.onClick.AddListener(() => OnDeleteClick(id));
+        _deleteButton.onClick.AddListener(() => OnDeleteClick(index));
     }
 
-    private void OnDeleteClick(string id)
+    private void OnDeleteClick(int index)
     {
-        _inventory.Remove(id);
+        _inventory.Remove(index);
         _deleteButton.onClick.RemoveAllListeners();
         OnInventoryStateChanged();
     }

@@ -9,6 +9,6 @@ public interface IInventory
     IInventoryItem[] GetAllItems();
 
     bool TryAdd(IInventoryItem item);
-    void Remove(string itemId);
+    void Remove(int index);
     bool HasItem(string itemId, out IInventoryItem item);
 }

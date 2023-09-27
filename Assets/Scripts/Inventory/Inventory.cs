@@ -73,15 +73,15 @@ public class Inventory : IInventory
 
         return true;
     }
-
-    public void Remove(string itemId)
+    
+    public void Remove(int index)
     {
-        var slotWitchItem = GetSlot(itemId);
+        var slot = _slots[index];
 
-        if (slotWitchItem == null)
+        if (slot == null)
             return;
         
-        slotWitchItem.Clear();
+        slot.Clear();
         OnInventoryStateChangedEvent?.Invoke();
     }
 
