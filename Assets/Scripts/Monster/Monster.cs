@@ -93,9 +93,16 @@ public class Monster : MonoBehaviour, IDamageable
         var rIndex = Random.Range(0, _drops.Count);
         var drop = _drops[rIndex];
         var rAmount = Random.Range(drop.AmountMin, drop.AmountMax);
-        var item = Instantiate(drop.Info.ItemTemplate, transform.position, Quaternion.identity);
-        item.SetInfo(drop.Info);
-        item.SetAmount(rAmount);
+
+        var spawnerItems = ServiceLocator.Current.Get<SpawnerItems>();
+
+        var data = new SaveManager.ItemData()
+        {
+            Amount = rAmount,
+            Position = transform.position,
+        };
+        
+        spawnerItems.SpawnItem(data, drop.Info);
     }
 
     public void SetData(SaveManager.MonsterData data, Character target)

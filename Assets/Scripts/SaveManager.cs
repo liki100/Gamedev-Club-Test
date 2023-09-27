@@ -16,6 +16,7 @@ public class SaveManager : MonoBehaviour
         public List<MonsterData> MonstersData = new List<MonsterData>();
         public List<InventoryData> InventoryData = new List<InventoryData>();
         public WeaponData WeaponData = new WeaponData();
+        public List<ItemData> ItemData = new List<ItemData>();
     }
 
     public class CharacterData
@@ -41,6 +42,13 @@ public class SaveManager : MonoBehaviour
     {
         public int Ammo;
         public float FireRateTime;
+    }
+    
+    public class ItemData
+    {
+        public string InfoId;
+        public int Amount;
+        public Vector3 Position;
     }
 
     public void Load()
@@ -80,6 +88,14 @@ public class SaveManager : MonoBehaviour
 
         var weapon = ServiceLocator.Current.Get<RangeWeapon>();
         weapon.SetData(worldData.WeaponData);
+
+        var spawnerItems = ServiceLocator.Current.Get<SpawnerItems>();
+        spawnerItems.DeleteItems();
+        foreach (var data in worldData.ItemData)
+        {
+            var info = _items.Find(i => i.Id == data.InfoId);
+            spawnerItems.SpawnItem(data, info);
+        }
     }
     
     public void Save()
@@ -125,12 +141,26 @@ public class SaveManager : MonoBehaviour
             FireRateTime = weapon.FireRateTime
         };
 
+        var items = ServiceLocator.Current.Get<SpawnerItems>().Items;
+        var itemData = new List<ItemData>();
+
+        foreach (var item in items)
+        {
+            itemData.Add(new ItemData()
+            {
+                InfoId = item.Info.Id,
+                Amount = item.Amount,
+                Position = item.transform.position,
+            });
+        }
+
         var data = new WorldData()
         {
             CharacterData = characterData,
             MonstersData = monsterData,
             InventoryData = inventoryData,
-            WeaponData = weaponData
+            WeaponData = weaponData,
+            ItemData = itemData
         };
         
         File.WriteAllText(Application.persistentDataPath + PATH, 

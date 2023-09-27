@@ -89596,7 +89596,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &519420033
 MonoBehaviour:
@@ -89791,7 +89791,7 @@ Transform:
   - {fileID: 127694049}
   - {fileID: 406296719}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &648376076
 GameObject:
@@ -90109,7 +90109,7 @@ RectTransform:
   - {fileID: 648376077}
   - {fileID: 852076356}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -90606,7 +90606,8 @@ MonoBehaviour:
   _healthBar: {fileID: 1794077400}
   _ammoUI: {fileID: 2048435182}
   _uiInventory: {fileID: 1503866591}
-  _spawner: {fileID: 1697809232}
+  _spawnerMonsters: {fileID: 1697809232}
+  _spawnerItems: {fileID: 2079645161}
   _save: {fileID: 1440585139}
 --- !u!4 &944333851
 Transform:
@@ -90621,7 +90622,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &954994402
 GameObject:
@@ -91214,7 +91215,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1503866587
 GameObject:
@@ -91844,7 +91845,7 @@ GameObject:
   - component: {fileID: 1697809233}
   - component: {fileID: 1697809232}
   m_Layer: 0
-  m_Name: Spawner
+  m_Name: SpawnerMonsters
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -91867,7 +91868,6 @@ MonoBehaviour:
   _topLeftPoint: {x: -11.5, y: 7.5}
   _bottomRightPoint: {x: 11.5, y: -7.5}
   _radiusCheckSpawn: 0.5
-  _monsters: []
 --- !u!4 &1697809233
 Transform:
   m_ObjectHideFlags: 0
@@ -91881,7 +91881,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1725986281 stripped
 Transform:
@@ -92398,6 +92398,51 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _label: {fileID: 2092030747}
+--- !u!1 &2079645160
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2079645162}
+  - component: {fileID: 2079645161}
+  m_Layer: 0
+  m_Name: SpawnerItems
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2079645161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079645160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5aa2d563e0c4aec4c82217e8672e5a07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _itemTemplate: {fileID: 8779815431890346108, guid: baa2cbbfc865b344987790b18d49375c, type: 3}
+--- !u!4 &2079645162
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079645160}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2092030745
 GameObject:
   m_ObjectHideFlags: 0
@@ -92542,7 +92587,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 882918633692048303, guid: dbfe108f4c10c014db385ba2cc052d58, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 882918633692048303, guid: dbfe108f4c10c014db385ba2cc052d58, type: 3}
       propertyPath: m_LocalPosition.x

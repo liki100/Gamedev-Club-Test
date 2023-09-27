@@ -10,6 +10,11 @@ public class Item : MonoBehaviour
     private InventoryItemInfo _info;
     private int _amount;
 
+    public InventoryItemInfo Info => _info;
+    public int Amount => _amount;
+    
+    public event Action<Item> OnRaisedEvent;
+
     private void Start()
     {
         _skin.sprite = _info.SpriteIcon;
@@ -22,14 +27,7 @@ public class Item : MonoBehaviour
 
     public void SetAmount(int amount)
     {
-        if (!_info.Stackable)
-        {
-            _amount = 1;
-        }
-        else
-        {
-            _amount = amount;
-        }
+        _amount = !_info.Stackable ? 1 : amount;
     }
 
     private void OnTriggerEnter2D(Collider2D collider)
@@ -43,6 +41,7 @@ public class Item : MonoBehaviour
             item.State.Amount = _amount;
             character.Inventory.TryAdd(item);
 
+            OnRaisedEvent?.Invoke(this);
             Destroy(gameObject);
         }
     }

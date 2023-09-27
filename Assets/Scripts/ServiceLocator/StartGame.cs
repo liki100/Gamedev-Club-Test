@@ -14,7 +14,8 @@ public class StartGame : MonoBehaviour
     [SerializeField] private HealthBar _healthBar;
     [SerializeField] private AmmoUI _ammoUI;
     [SerializeField] private UIInventory _uiInventory;
-    [SerializeField] private Spawner _spawner;
+    [SerializeField] private Spawner _spawnerMonsters;
+    [SerializeField] private SpawnerItems _spawnerItems;
     [SerializeField] private SaveManager _save;
     
     private EventBus _eventBus;
@@ -38,7 +39,8 @@ public class StartGame : MonoBehaviour
         ServiceLocator.Current.Register(_character);
         ServiceLocator.Current.Register(_rangeWeapon);
         ServiceLocator.Current.Register(_joystick);
-        ServiceLocator.Current.Register(_spawner);
+        ServiceLocator.Current.Register(_spawnerMonsters);
+        ServiceLocator.Current.Register(_spawnerItems);
         ServiceLocator.Current.Register(_uiInventory);
     }
     
@@ -50,7 +52,8 @@ public class StartGame : MonoBehaviour
         _rangeWeapon.Init();
         _mover.Init();
         _uiInventory.Init();
-        _spawner.Init();
+        _spawnerMonsters.Init();
+        _spawnerItems.Init();
     }
     
     private void OnDisable()

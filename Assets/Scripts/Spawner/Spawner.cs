@@ -10,7 +10,7 @@ public class Spawner : MonoBehaviour, IService
     [SerializeField] private Vector2 _bottomRightPoint;
     [SerializeField] private float _radiusCheckSpawn;
 
-    public List<Monster> _monsters;
+    private List<Monster> _monsters;
     
     public List<Monster> Monsters => _monsters;
 
@@ -41,12 +41,12 @@ public class Spawner : MonoBehaviour, IService
                 return new Vector2(rX, rY);
             }
         }
-
         return Vector2.zero;
     }
 
     private void OnDied(Monster monster)
     {
+        monster.OnDiedEvent -= OnDied;
         _monsters.Remove(monster);
     }
 
@@ -54,6 +54,7 @@ public class Spawner : MonoBehaviour, IService
     {
         foreach (var monster in _monsters)
         {
+            monster.OnDiedEvent -= OnDied;
             Destroy(monster.gameObject);
         }
         _monsters.Clear();
