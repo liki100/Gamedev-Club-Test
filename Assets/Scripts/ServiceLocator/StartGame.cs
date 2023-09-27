@@ -29,6 +29,7 @@ public class StartGame : MonoBehaviour
         _save.Load();
         
         _eventBus.Subscribe<PlayerDeadSignal>(OnRestartGame);
+        _eventBus.Subscribe<AllMonstersDeadSignal>(OnNextGame);
     }
 
     private void RegisterServices()
@@ -59,11 +60,17 @@ public class StartGame : MonoBehaviour
     private void OnDisable()
     {
         _eventBus.Unsubscribe<PlayerDeadSignal>(OnRestartGame);
+        _eventBus.Unsubscribe<AllMonstersDeadSignal>(OnNextGame);
     }
 
     private void OnRestartGame(PlayerDeadSignal signal)
     {
         _save.Delete();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+    
+    private void OnNextGame(AllMonstersDeadSignal signal)
+    {
+        _spawnerMonsters.Init();
     }
 }

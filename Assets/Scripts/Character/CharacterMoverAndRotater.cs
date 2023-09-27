@@ -52,7 +52,7 @@ public class CharacterMoverAndRotater : MonoBehaviour
                 
                 var direction = _overlapResults[i].gameObject.transform.position - _weapon.transform.position;
 
-                targets.Add(direction, distance);
+                targets.TryAdd(direction, distance);
             }
 
             var minDirection = targets.OrderBy(k => k.Value).First();

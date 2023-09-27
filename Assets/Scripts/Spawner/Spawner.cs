@@ -11,11 +11,13 @@ public class Spawner : MonoBehaviour, IService
     [SerializeField] private float _radiusCheckSpawn;
 
     private List<Monster> _monsters;
+    private EventBus _eventBus;
     
     public List<Monster> Monsters => _monsters;
 
     public void Init()
     {
+        _eventBus = ServiceLocator.Current.Get<EventBus>();
         _monsters = new List<Monster>();
         for (var i = 0; i < _spawnCount; i++)
         {
@@ -48,6 +50,9 @@ public class Spawner : MonoBehaviour, IService
     {
         monster.OnDiedEvent -= OnDied;
         _monsters.Remove(monster);
+
+        if (_monsters.Count == 0)
+            _eventBus.Invoke(new AllMonstersDeadSignal());
     }
 
     public void DeleteMonsters()
