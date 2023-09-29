@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -18,13 +19,19 @@ public class Spawner : MonoBehaviour, IService
     public void Init()
     {
         _eventBus = ServiceLocator.Current.Get<EventBus>();
+        _eventBus.Subscribe<MonsterDeadSignal>(MonsterDead);
+
+        SpawnNumberMonsters();
+    }
+
+    public void SpawnNumberMonsters()
+    {
         _monsters = new List<Monster>();
         for (var i = 0; i < _spawnCount; i++)
         {
-            var monster = Instantiate(_monsterTemplate, GetFreeRandomPoint(), Quaternion.identity, transform);
+            var monster = CreateMonsters();
+            monster.transform.position = GetFreeRandomPoint();
             monster.Init();
-            monster.OnDiedEvent += OnDied;
-            _monsters.Add(monster);
         }
     }
 
@@ -45,11 +52,10 @@ public class Spawner : MonoBehaviour, IService
         }
         return Vector2.zero;
     }
-
-    private void OnDied(Monster monster)
+    
+    private void MonsterDead(MonsterDeadSignal signal)
     {
-        monster.OnDiedEvent -= OnDied;
-        _monsters.Remove(monster);
+        _monsters.Remove(signal.Value);
 
         if (_monsters.Count == 0)
             _eventBus.Invoke(new AllMonstersDeadSignal());
@@ -57,20 +63,24 @@ public class Spawner : MonoBehaviour, IService
 
     public void DeleteMonsters()
     {
-        foreach (var monster in _monsters)
-        {
-            monster.OnDiedEvent -= OnDied;
+        foreach (var monster in _monsters) 
             Destroy(monster.gameObject);
-        }
+        
         _monsters.Clear();
     }
 
-    public void CreateMonsters(SaveManager.MonsterData data, Character character)
+    public Monster CreateMonsters()
     {
-        var monster = Instantiate(_monsterTemplate, data.Position, Quaternion.identity, transform);
-        monster.OnDiedEvent += OnDied;
-        monster.SetData(data, character);
+        var monster = Instantiate(_monsterTemplate, transform);
+
         _monsters.Add(monster);
+
+        return monster;
+    }
+
+    private void OnDestroy()
+    {
+        _eventBus.Unsubscribe<MonsterDeadSignal>(MonsterDead);
     }
 
     private void OnDrawGizmosSelected()

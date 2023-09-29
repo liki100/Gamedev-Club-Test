@@ -28,7 +28,7 @@ public class StartGame : MonoBehaviour
         Init();
         _save.Load();
         
-        _eventBus.Subscribe<PlayerDeadSignal>(OnRestartGame);
+        _eventBus.Subscribe<CharacterDeadSignal>(OnRestartGame);
         _eventBus.Subscribe<AllMonstersDeadSignal>(OnNextGame);
     }
 
@@ -59,11 +59,11 @@ public class StartGame : MonoBehaviour
     
     private void OnDisable()
     {
-        _eventBus.Unsubscribe<PlayerDeadSignal>(OnRestartGame);
+        _eventBus.Unsubscribe<CharacterDeadSignal>(OnRestartGame);
         _eventBus.Unsubscribe<AllMonstersDeadSignal>(OnNextGame);
     }
 
-    private void OnRestartGame(PlayerDeadSignal signal)
+    private void OnRestartGame(CharacterDeadSignal signal)
     {
         _save.Delete();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -71,6 +71,6 @@ public class StartGame : MonoBehaviour
     
     private void OnNextGame(AllMonstersDeadSignal signal)
     {
-        _spawnerMonsters.Init();
+        _spawnerMonsters.SpawnNumberMonsters();
     }
 }

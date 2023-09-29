@@ -486,12 +486,27 @@ PrefabInstance:
       propertyPath: _monster
       value: 
       objectReference: {fileID: 7927592211639602893}
+    - target: {fileID: 2225013166561879307, guid: e46fdf6c797b85c49a77912c9bb2f2eb, type: 3}
+      propertyPath: _healthBar
+      value: 
+      objectReference: {fileID: 4415879599377701448}
     - target: {fileID: 4520970341364194180, guid: e46fdf6c797b85c49a77912c9bb2f2eb, type: 3}
       propertyPath: m_Name
       value: Canvas
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e46fdf6c797b85c49a77912c9bb2f2eb, type: 3}
+--- !u!114 &4415879599377701448 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2153991262628960026, guid: e46fdf6c797b85c49a77912c9bb2f2eb, type: 3}
+  m_PrefabInstance: {fileID: 2354495013372955986}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &4479544248762799042 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2199535077252177552, guid: e46fdf6c797b85c49a77912c9bb2f2eb, type: 3}

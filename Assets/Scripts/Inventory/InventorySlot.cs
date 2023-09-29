@@ -23,4 +23,15 @@ public class InventorySlot : IInventorySlot
         Item.State.Amount = 0;
         Item = null;
     }
+
+    public SaveManager.InventoryData GetData()
+    {
+        var data = new SaveManager.InventoryData()
+        {
+            InfoId = ItemId,
+            Amount = Amount
+        };
+        
+        return data;
+    }
 }

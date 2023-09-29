@@ -10,4 +10,6 @@ public interface IInventorySlot
 
     void SetItem(IInventoryItem item);
     void Clear();
+
+    SaveManager.InventoryData GetData();
 }

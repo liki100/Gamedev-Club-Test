@@ -10,16 +10,16 @@ public class HealthBar : MonoBehaviour
     public void Init()
     {
         _eventBus = ServiceLocator.Current.Get<EventBus>();
-        _eventBus.Subscribe<HealthChangedSignal>(DisplayHealth);
+        _eventBus.Subscribe<CharacterHealthChangedSignal>(DisplayHealth);
     }
 
-    private void DisplayHealth(HealthChangedSignal signal)
+    private void DisplayHealth(CharacterHealthChangedSignal signal)
     {
         _healthBar.fillAmount = signal.Value;
     }
 
     private void OnDestroy()
     {
-        _eventBus.Unsubscribe<HealthChangedSignal>(DisplayHealth);
+        _eventBus.Unsubscribe<CharacterHealthChangedSignal>(DisplayHealth);
     }
 }

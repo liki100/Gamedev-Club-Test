@@ -17,14 +17,13 @@ public class Character : MonoBehaviour, IDamageable, IService
     private EventBus _eventBus;
 
     public Inventory Inventory => _inventory;
-    public float Health => _currentHealth;
 
     public void Init()
     {
         _currentHealth = _health;
         _inventory = new Inventory(_capacityInventory);
         _eventBus = ServiceLocator.Current.Get<EventBus>();
-        _eventBus.Invoke(new HealthChangedSignal(_currentHealth/_health));
+        _eventBus.Invoke(new CharacterHealthChangedSignal(_currentHealth/_health));
     }
 
     public void ApplyDamage(float damage)
@@ -36,19 +35,30 @@ public class Character : MonoBehaviour, IDamageable, IService
             _currentHealth = 0;
         }
 
-        _eventBus.Invoke(new HealthChangedSignal(_currentHealth/_health));
+        _eventBus.Invoke(new CharacterHealthChangedSignal(_currentHealth/_health));
 
         if (_currentHealth == 0)
         {
             gameObject.SetActive(false);
-            _eventBus.Invoke(new PlayerDeadSignal());
+            _eventBus.Invoke(new CharacterDeadSignal());
         }
+    }
+
+    public SaveManager.CharacterData GetData()
+    {
+        var data = new SaveManager.CharacterData()
+        {
+            Health = _health,
+            Position = transform.position
+        };
+        
+        return data;
     }
 
     public void SetData(SaveManager.CharacterData data)
     {
         transform.position = data.Position;
         _currentHealth = data.Health;
-        _eventBus.Invoke(new HealthChangedSignal(_currentHealth/_health));
+        _eventBus.Invoke(new CharacterHealthChangedSignal(_currentHealth/_health));
     }
 }

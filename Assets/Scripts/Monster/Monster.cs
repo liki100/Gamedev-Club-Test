@@ -15,15 +15,13 @@ public class Monster : MonoBehaviour, IDamageable
 
     private float _currentHealth;
     private Character _target;
-    
-    public float Health => _currentHealth;
-    public Character Target => _target;
-    
+    private EventBus _eventBus;
+
     public event Action<float> OnHealthChangedEvent;
-    public event Action<Monster> OnDiedEvent;
 
     public void Init()
     {
+        _eventBus = ServiceLocator.Current.Get<EventBus>();
         _currentHealth = _health;
         OnHealthChangedEvent?.Invoke(_currentHealth/_health);
     }
@@ -65,7 +63,7 @@ public class Monster : MonoBehaviour, IDamageable
         if (_currentHealth <= 0)
         {
             DropItem();
-            OnDiedEvent?.Invoke(this);
+            _eventBus.Invoke(new MonsterDeadSignal(this));
             Destroy(gameObject);
         }
     }
@@ -102,13 +100,29 @@ public class Monster : MonoBehaviour, IDamageable
             Position = transform.position,
         };
         
-        spawnerItems.SpawnItem(data, drop.Info);
+        var item = spawnerItems.SpawnItem();
+        item.SetData(data, drop.Info);
     }
 
-    public void SetData(SaveManager.MonsterData data, Character target)
+    public SaveManager.MonsterData GetData()
     {
+        var data = new SaveManager.MonsterData()
+        {
+            Position = transform.position,
+            Target = _target != null,
+            Health = _currentHealth
+        };
+
+        return data;
+    }
+
+    public void SetData(SaveManager.MonsterData data)
+    {
+        transform.position = data.Position;
+        _target = data.Target ? ServiceLocator.Current.Get<Character>() : null;
         _currentHealth = data.Health;
-        _target = target;
+        
+        _eventBus = ServiceLocator.Current.Get<EventBus>();
         OnHealthChangedEvent?.Invoke(_currentHealth/_health);
     }
 }

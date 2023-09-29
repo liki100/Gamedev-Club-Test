@@ -9,40 +9,46 @@ public class Item : MonoBehaviour
     
     private InventoryItemInfo _info;
     private int _amount;
-
-    public InventoryItemInfo Info => _info;
-    public int Amount => _amount;
-    
-    public event Action<Item> OnRaisedEvent;
+    private EventBus _eventBus;
 
     private void Start()
     {
         _skin.sprite = _info.SpriteIcon;
     }
 
-    public void SetInfo(InventoryItemInfo info)
-    {
-        _info = info;
-    }
-
-    public void SetAmount(int amount)
-    {
-        _amount = !_info.Stackable ? 1 : amount;
-    }
-
     private void OnTriggerEnter2D(Collider2D collider)
     {
         if (collider.TryGetComponent(out Character character))
         {
-            if (character.Inventory.IsFull)
-                return;
-            
             var item = new InventoryItem(_info);
             item.State.Amount = _amount;
-            character.Inventory.TryAdd(item);
-
-            OnRaisedEvent?.Invoke(this);
+            
+            if (!character.Inventory.TryAdd(item)) 
+                return;
+            
+            _eventBus.Invoke(new ItemRaisedSignal(this));
             Destroy(gameObject);
         }
+    }
+
+    public SaveManager.ItemData GetData()
+    {
+        var data = new SaveManager.ItemData()
+        {
+            InfoId = _info.Id,
+            Amount = _amount,
+            Position = transform.position
+        };
+
+        return data;
+    }
+
+    public void SetData(SaveManager.ItemData data, InventoryItemInfo info)
+    {
+        _info = info;
+        _amount = data.Amount;
+        transform.position = data.Position;
+
+        _eventBus = ServiceLocator.Current.Get<EventBus>();
     }
 }

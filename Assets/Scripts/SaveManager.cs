@@ -68,8 +68,8 @@ public class SaveManager : MonoBehaviour
         spawner.DeleteMonsters();
         foreach (var monsterData in worldData.MonstersData)
         {
-            var target = monsterData.Target ? character : null;
-            spawner.CreateMonsters(monsterData, target);
+            var monster = spawner.CreateMonsters();
+            monster.SetData(monsterData);
         }
         
         var inventory = character.Inventory;
@@ -94,32 +94,22 @@ public class SaveManager : MonoBehaviour
         foreach (var data in worldData.ItemData)
         {
             var info = _items.Find(i => i.Id == data.InfoId);
-            spawnerItems.SpawnItem(data, info);
+            var item = spawnerItems.SpawnItem();
+            item.SetData(data, info);
         }
     }
     
     public void Save()
     {
         var character = ServiceLocator.Current.Get<Character>();
-        
-        
-        var characterData = new CharacterData()
-        {
-            Position = character.transform.position,
-            Health = character.Health
-        };
-        
+        var characterData = character.GetData();
+
         var monsters = ServiceLocator.Current.Get<Spawner>().Monsters;
         var monsterData = new List<MonsterData>();
         
         foreach (var monster in monsters)
         {
-            monsterData.Add(new MonsterData()
-            {
-                Position = monster.transform.position,
-                Target = monster.Target != null,
-                Health = monster.Health
-            });
+            monsterData.Add(monster.GetData());
         }
 
         var inventorySlots = character.Inventory.GetAllSlotIsNotEmpty();
@@ -127,31 +117,18 @@ public class SaveManager : MonoBehaviour
 
         foreach (var slot in inventorySlots)
         {
-            inventoryData.Add( new InventoryData() 
-            {
-                InfoId = slot.ItemId,
-                Amount = slot.Amount
-            });
+            inventoryData.Add(slot.GetData());
         }
 
         var weapon = ServiceLocator.Current.Get<RangeWeapon>();
-        var weaponData = new WeaponData()
-        {
-            Ammo = weapon.Ammo,
-            FireRateTime = weapon.FireRateTime
-        };
+        var weaponData = weapon.GetData();
 
         var items = ServiceLocator.Current.Get<SpawnerItems>().Items;
         var itemData = new List<ItemData>();
 
         foreach (var item in items)
         {
-            itemData.Add(new ItemData()
-            {
-                InfoId = item.Info.Id,
-                Amount = item.Amount,
-                Position = item.transform.position,
-            });
+            itemData.Add(item.GetData());
         }
 
         var data = new WorldData()
