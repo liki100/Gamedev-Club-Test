@@ -1,14 +1,11 @@
-﻿using System;
-using UnityEngine;
-
-[Serializable]
-public class InventoryItemState : IInventoryItemState
+﻿public class InventoryItemState : IInventoryItemState
 {
-    private int _itemAmount;
-    public int Amount { get => _itemAmount; set => _itemAmount = value; }
-    
+    public int Amount { get; set; }
+    public bool isEquipped { get; set; }
+
     public InventoryItemState()
     {
-        _itemAmount = 0;
+        Amount = 0;
+        isEquipped = false;
     }
 }

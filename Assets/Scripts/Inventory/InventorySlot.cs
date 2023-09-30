@@ -9,8 +9,8 @@ public class InventorySlot : IInventorySlot
 
     public void SetItem(IInventoryItem item)
     {
-        if (!IsEmpty)
-            return;
+        /*if (!IsEmpty)
+            return;*/
 
         Item = item;
     }
@@ -29,7 +29,7 @@ public class InventorySlot : IInventorySlot
         var data = new SaveManager.InventoryData()
         {
             InfoId = ItemId,
-            Amount = Amount
+            Amount = Amount,
         };
         
         return data;

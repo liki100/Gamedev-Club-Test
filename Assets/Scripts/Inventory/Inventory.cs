@@ -10,7 +10,9 @@ public class Inventory : IInventory
     public int Capacity { get; set; }
     public bool IsFull => _slots.All(slot => !slot.IsEmpty);
 
-    private List<IInventorySlot> _slots;
+    private readonly List<IInventorySlot> _slots;
+
+    private IInventorySlot _weaponSlot;
 
     public Inventory(int capacity)
     {
@@ -22,6 +24,8 @@ public class Inventory : IInventory
         {
             _slots.Add(new InventorySlot());
         }
+
+        _weaponSlot = new InventorySlot();
     }
     
     public IInventoryItem GetItem(string itemId)
@@ -98,6 +102,55 @@ public class Inventory : IInventory
     {
         item = GetItem(itemId);
         return item != null;
+    }
+
+    public void AddEquip(int index)
+    {
+        var slot = _slots[index];
+        
+        if (slot == null)
+            return;
+
+        var item = slot.Item;
+
+        var equippable = item.Info.Equippable;
+
+        if (!equippable)
+            return;
+
+        if (item.Info.Type != ItemType.Weapon) 
+            return;
+        
+        if (!_weaponSlot.IsEmpty)
+        {
+            var currentItem = _weaponSlot.Item;
+            _weaponSlot.SetItem(item);
+            _weaponSlot.Item.State.isEquipped = true;
+            slot.SetItem(currentItem);
+            slot.Item.State.isEquipped = false;
+        }
+        else
+        {
+            _weaponSlot.SetItem(item);
+            _weaponSlot.Item.State.isEquipped = true;
+            slot.Clear();
+        }
+
+        var weaponRange = ServiceLocator.Current.Get<RangeWeapon>();
+        
+        weaponRange.SetInfo((WeaponInventoryItemInfo)_weaponSlot.Item.Info);
+        
+        OnInventoryStateChangedEvent?.Invoke();
+    }
+
+    public void RemoveEquip(int index)
+    {
+        
+    }
+
+    public IInventorySlot GetWeaponSlot()
+    {
+        return _weaponSlot;
     }
 
     public IInventorySlot[] GetAllSlot()

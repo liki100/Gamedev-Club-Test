@@ -11,4 +11,6 @@ public interface IInventory
     bool TryAdd(IInventoryItem item);
     void Remove(int index);
     bool HasItem(string itemId, out IInventoryItem item);
+    void AddEquip(int index);
+    void RemoveEquip(int index);
 }

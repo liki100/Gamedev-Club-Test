@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class RangeWeapon : MonoBehaviour, IService
 {
-    [SerializeField] private RangeWeaponData _data;
+    [SerializeField] private WeaponInventoryItemInfo _data;
     [SerializeField] private SpriteRenderer _weaponSkin;
     [SerializeField] private Projectile _projectileTemplate;
     [SerializeField] private ForceMode2D _forceMode = ForceMode2D.Impulse;
@@ -23,12 +23,24 @@ public class RangeWeapon : MonoBehaviour, IService
     {
         _currentAmmo = _data.Ammo;
         _currentFireRateTime = _data.FireRate;
-        _weaponSkin.sprite = _data.WeaponSprite;
-        _muzzle = new GameObject("Muzzle").transform;
-        _muzzle.parent = _weaponSkin.transform;
+        _weaponSkin.sprite = _data.SpriteIcon;
+        
+        if (_muzzle == null)
+        {
+            _muzzle = new GameObject("Muzzle").transform;
+            _muzzle.parent = _weaponSkin.transform;
+        }
+        
         _muzzle.localPosition = _data.Muzzle;
         _eventBus = ServiceLocator.Current.Get<EventBus>();
         _eventBus.Invoke(new AmmoChangedSignal(_currentAmmo, _data.Ammo));
+
+        var slot = ServiceLocator.Current.Get<Character>().Inventory.GetWeaponSlot();
+
+        var item = new InventoryItem(_data);
+        item.State.Amount = 1;
+        item.State.isEquipped = true;
+        slot.SetItem(item);
     }
 
     private void Update()
@@ -97,6 +109,12 @@ public class RangeWeapon : MonoBehaviour, IService
         };
         
         return data;
+    }
+
+    public void SetInfo(WeaponInventoryItemInfo info)
+    {
+        _data = info;
+        Init();
     }
 
     public void SetData(SaveManager.WeaponData data)

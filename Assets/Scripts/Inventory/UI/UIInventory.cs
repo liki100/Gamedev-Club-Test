@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class UIInventory : MonoBehaviour, IService
@@ -10,6 +11,9 @@ public class UIInventory : MonoBehaviour, IService
     [SerializeField] private Transform _container;
     [SerializeField] private TMP_Text _inventoryCountText;
     [SerializeField] private Button _deleteButton;
+    [SerializeField] private Button _equipButton;
+
+    [SerializeField] private UIInventorySlot _uiWeaponSlot;
     
     public List<UIInventorySlot> _uiSlots;
     private Inventory _inventory;
@@ -19,7 +23,7 @@ public class UIInventory : MonoBehaviour, IService
         _inventory = ServiceLocator.Current.Get<Character>().Inventory;
         
         _uiSlots = new List<UIInventorySlot>();
-        
+
         for (var i = 0; i < _inventory.Capacity; i++)
         {
             _uiSlots.Add(Instantiate(_slotTemplate, _container));
@@ -38,6 +42,8 @@ public class UIInventory : MonoBehaviour, IService
             uiSlot.Button.onClick.AddListener(() => OnSelected(index));
             uiSlot.Refresh();
         }
+        _uiWeaponSlot.SetSlot(_inventory.GetWeaponSlot());
+        _uiWeaponSlot.Refresh();
     }
 
     public void Clear()
@@ -61,12 +67,27 @@ public class UIInventory : MonoBehaviour, IService
         {
             slot.Refresh();
         }
+        _uiWeaponSlot.Refresh();
         _inventoryCountText.text = $"{_inventory.GetAllSlotIsNotEmpty().Length}/{_inventory.Capacity}";
         _deleteButton.interactable = false;
+        _equipButton.interactable = false;
     }
 
     private void OnSelected(int index)
     {
+        _deleteButton.interactable = false;
+        _equipButton.interactable = false;
+        
+        _equipButton.onClick.RemoveAllListeners();
+        _deleteButton.onClick.RemoveAllListeners();
+        
+        var slots = _inventory.GetAllSlot();
+        if (slots[index].Item.Info.Equippable)
+        {
+            _equipButton.interactable = true;
+            _equipButton.onClick.AddListener(() => OnEquipClick(index));
+        }
+        
         _deleteButton.interactable = true;
         _deleteButton.onClick.AddListener(() => OnDeleteClick(index));
     }
@@ -75,6 +96,13 @@ public class UIInventory : MonoBehaviour, IService
     {
         _inventory.Remove(index);
         _deleteButton.onClick.RemoveAllListeners();
+        OnInventoryStateChanged();
+    }
+
+    private void OnEquipClick(int index)
+    {
+        _inventory.AddEquip(index);
+        _equipButton.onClick.RemoveAllListeners();
         OnInventoryStateChanged();
     }
 }
