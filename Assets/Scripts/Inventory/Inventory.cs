@@ -12,7 +12,7 @@ public class Inventory : IInventory
 
     private readonly List<IInventorySlot> _slots;
 
-    private IInventorySlot _weaponSlot;
+    private readonly IInventorySlot _weaponSlot;
 
     public Inventory(int capacity)
     {
@@ -138,14 +138,9 @@ public class Inventory : IInventory
 
         var weaponRange = ServiceLocator.Current.Get<RangeWeapon>();
         
-        weaponRange.SetInfo((WeaponInventoryItemInfo)_weaponSlot.Item.Info);
+        weaponRange.UpdateData();
         
         OnInventoryStateChangedEvent?.Invoke();
-    }
-
-    public void RemoveEquip(int index)
-    {
-        
     }
 
     public IInventorySlot GetWeaponSlot()

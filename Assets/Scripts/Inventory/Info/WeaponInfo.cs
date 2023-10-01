@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(menuName = "Create New WeaponItemInfo", fileName = "WeaponInventoryItemInfo")]
-public class WeaponInventoryItemInfo : InventoryItemInfo
+[CreateAssetMenu(menuName = "Data/Create New WeaponInfo", fileName = "WeaponInfo")]
+public class WeaponInfo : ItemInfo
 {
     [SerializeField] private Vector3 _muzzle;
     [SerializeField, Min(0f)] private float _damage;

@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.Serialization;
 
-[CreateAssetMenu(menuName = "Create New ItemInfo", fileName = "InventoryItemInfo")]
-public class InventoryItemInfo : ScriptableObject, IInventoryItemInfo
+[CreateAssetMenu(menuName = "Data/Create New ItemInfo", fileName = "ItemInfo")]
+public class ItemInfo : ScriptableObject, IInventoryItemInfo
 {
     [SerializeField] private string _id;
     [SerializeField] private string _title;
@@ -18,9 +18,4 @@ public class InventoryItemInfo : ScriptableObject, IInventoryItemInfo
     public Sprite SpriteIcon => _spriteIcon;
     public bool Stackable => _stackable;
     public bool Equippable => _equippable;
-    
-    public virtual string Display()
-    {
-        return "";
-    }
 }

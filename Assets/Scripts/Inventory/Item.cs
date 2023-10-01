@@ -7,7 +7,7 @@ public class Item : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer _skin; 
     
-    private InventoryItemInfo _info;
+    private ItemInfo _info;
     private int _amount;
     private EventBus _eventBus;
 
@@ -43,12 +43,14 @@ public class Item : MonoBehaviour
         return data;
     }
 
-    public void SetData(SaveManager.ItemData data, InventoryItemInfo info)
+    public void SetData(SaveManager.ItemData data, ItemInfo info)
     {
         _info = info;
         _amount = data.Amount;
         transform.position = data.Position;
 
         _eventBus = ServiceLocator.Current.Get<EventBus>();
+        
+        _skin.sprite = _info.SpriteIcon;
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class RangeWeapon : MonoBehaviour, IService
 {
-    [SerializeField] private WeaponInventoryItemInfo _data;
+    [SerializeField] private WeaponInfo _data;
     [SerializeField] private SpriteRenderer _weaponSkin;
     [SerializeField] private Projectile _projectileTemplate;
     [SerializeField] private ForceMode2D _forceMode = ForceMode2D.Impulse;
@@ -16,31 +16,22 @@ public class RangeWeapon : MonoBehaviour, IService
     private bool _isShooting;
     private bool _isReloading;
     private Transform _muzzle;
+    private Inventory _inventory;
 
     private EventBus _eventBus;
 
     public void Init()
     {
-        _currentAmmo = _data.Ammo;
-        _currentFireRateTime = _data.FireRate;
-        _weaponSkin.sprite = _data.SpriteIcon;
-        
-        if (_muzzle == null)
-        {
-            _muzzle = new GameObject("Muzzle").transform;
-            _muzzle.parent = _weaponSkin.transform;
-        }
-        
-        _muzzle.localPosition = _data.Muzzle;
         _eventBus = ServiceLocator.Current.Get<EventBus>();
-        _eventBus.Invoke(new AmmoChangedSignal(_currentAmmo, _data.Ammo));
+        _inventory = ServiceLocator.Current.Get<Character>().Inventory;
 
-        var slot = ServiceLocator.Current.Get<Character>().Inventory.GetWeaponSlot();
-
+        var slot = _inventory.GetWeaponSlot();
         var item = new InventoryItem(_data);
         item.State.Amount = 1;
         item.State.isEquipped = true;
         slot.SetItem(item);
+        
+        UpdateData();
     }
 
     private void Update()
@@ -78,6 +69,11 @@ public class RangeWeapon : MonoBehaviour, IService
         projectile.Rigidbody.AddForce(_muzzle.right * _force, _forceMode);
     }
     
+    public void SetReload()
+    {
+        StartCoroutine(Reload());
+    }
+    
     private IEnumerator Reload()
     {
         if (_currentAmmo == _data.Ammo) 
@@ -90,20 +86,35 @@ public class RangeWeapon : MonoBehaviour, IService
         _isReloading = false;
     }
 
-    public void SetReload()
-    {
-        StartCoroutine(Reload());
-    }
-
     public void SetShoot(bool isShooting)
     {
         _isShooting = isShooting;
     }
 
+    public void UpdateData()
+    {
+        _data = (WeaponInfo)_inventory.GetWeaponSlot().Item.Info;
+        
+        _currentAmmo = _data.Ammo;
+        _currentFireRateTime = _data.FireRate;
+        _weaponSkin.sprite = _data.SpriteIcon;
+        
+        if (_muzzle == null)
+        {
+            _muzzle = new GameObject("Muzzle").transform;
+            _muzzle.parent = _weaponSkin.transform;
+        }
+        
+        _muzzle.localPosition = _data.Muzzle;
+        
+        _eventBus.Invoke(new AmmoChangedSignal(_currentAmmo, _data.Ammo));
+    }
+    
     public SaveManager.WeaponData GetData()
     {
         var data = new SaveManager.WeaponData()
         {
+            InfoId = _data.Id,
             Ammo = _currentAmmo,
             FireRateTime = _currentFireRateTime
         };
@@ -111,16 +122,10 @@ public class RangeWeapon : MonoBehaviour, IService
         return data;
     }
 
-    public void SetInfo(WeaponInventoryItemInfo info)
-    {
-        _data = info;
-        Init();
-    }
-
     public void SetData(SaveManager.WeaponData data)
     {
         _currentAmmo = data.Ammo;
         _currentFireRateTime = data.FireRateTime;
-        _eventBus.Invoke(new AmmoChangedSignal(_currentAmmo, _data.Ammo));
+        UpdateData();
     }
 }

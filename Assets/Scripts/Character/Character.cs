@@ -7,13 +7,9 @@ public class Character : MonoBehaviour, IDamageable, IService
 {
     [SerializeField] private float _health;
     [SerializeField] private int _capacityInventory;
-    private int _overlapResultsCount;
     
     private float _currentHealth;
-    private Rigidbody2D _rigidbody;
-    private Vector3 _moveDirection;
     private Inventory _inventory;
-    
     private EventBus _eventBus;
 
     public Inventory Inventory => _inventory;

@@ -8,6 +8,4 @@ public interface IInventoryItemInfo
     Sprite SpriteIcon { get; }
     bool Stackable { get; }
     bool Equippable { get; }
-
-    string Display();
 }

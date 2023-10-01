@@ -21,19 +21,22 @@ public class UIInventory : MonoBehaviour, IService
     public void Init()
     {
         _inventory = ServiceLocator.Current.Get<Character>().Inventory;
-        
-        _uiSlots = new List<UIInventorySlot>();
+        _inventory.OnInventoryStateChangedEvent += OnInventoryStateChanged;
 
+        _uiSlots = new List<UIInventorySlot>();
+        
+        UpdateData();
+    }
+
+    public void UpdateData()
+    {
         for (var i = 0; i < _inventory.Capacity; i++)
         {
             _uiSlots.Add(Instantiate(_slotTemplate, _container));
         }
         
-        _inventory.OnInventoryStateChangedEvent += OnInventoryStateChanged;
-
         var allSlots = _inventory.GetAllSlot();
-        var allSlotsCount = allSlots.Length;
-        for (var i = 0; i < allSlotsCount; i++)
+        for (var i = 0; i < allSlots.Length; i++)
         {
             var index = i;
             var slot = allSlots[index];

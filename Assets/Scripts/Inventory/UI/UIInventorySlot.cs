@@ -8,10 +8,7 @@ public class UIInventorySlot : MonoBehaviour
     [SerializeField] private TMP_Text _textAmount;
     [SerializeField] private Button _button;
 
-    public int INDEX;
-    
     private IInventorySlot _slot;
-    public IInventorySlot Slot => _slot;
     public Button Button => _button;
 
     public void SetSlot(IInventorySlot slot)

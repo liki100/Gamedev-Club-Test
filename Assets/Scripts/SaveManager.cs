@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class SaveManager : MonoBehaviour
 {
-    [SerializeField] private List<InventoryItemInfo> _items;
+    [SerializeField] private List<ItemInfo> _items;
 
-    private readonly string PATH ="/jsonWorld.json";
+    private readonly string PATH ="/WorldData.save";
 
     public class WorldData
     {
@@ -40,6 +40,7 @@ public class SaveManager : MonoBehaviour
     
     public class WeaponData
     {
+        public string InfoId;
         public int Ammo;
         public float FireRateTime;
     }
@@ -81,10 +82,17 @@ public class SaveManager : MonoBehaviour
             item.State.Amount = inventoryData.Amount;
             inventory.TryAdd(item);
         }
+        
+        var weaponSlot = inventory.GetWeaponSlot();
+        var weaponInfo = _items.Find(i => i.Id == worldData.WeaponData.InfoId);
+        var weaponItem = new InventoryItem(weaponInfo);
+        weaponItem.State.Amount = 1;
+        weaponItem.State.isEquipped = true;
+        weaponSlot.SetItem(weaponItem);
 
         var uiInventory = ServiceLocator.Current.Get<UIInventory>();
         uiInventory.Clear();
-        uiInventory.Init();
+        uiInventory.UpdateData();
 
         var weapon = ServiceLocator.Current.Get<RangeWeapon>();
         weapon.SetData(worldData.WeaponData);

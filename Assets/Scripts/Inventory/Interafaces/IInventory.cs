@@ -12,5 +12,4 @@ public interface IInventory
     void Remove(int index);
     bool HasItem(string itemId, out IInventoryItem item);
     void AddEquip(int index);
-    void RemoveEquip(int index);
 }
