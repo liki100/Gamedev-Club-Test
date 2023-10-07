@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
@@ -6,17 +5,17 @@ using UnityEngine;
 
 public class SaveManager : MonoBehaviour
 {
-    [SerializeField] private List<ItemInfo> _items;
+    [SerializeField] private List<DefaultItemInfo> _items;
 
     private readonly string PATH ="/WorldData.save";
 
     public class WorldData
     {
-        public CharacterData CharacterData = new CharacterData();
-        public List<MonsterData> MonstersData = new List<MonsterData>();
-        public List<InventoryData> InventoryData = new List<InventoryData>();
-        public WeaponData WeaponData = new WeaponData();
-        public List<ItemData> ItemData = new List<ItemData>();
+        public CharacterData CharacterData = new();
+        public List<MonsterData> MonstersData = new();
+        public List<InventoryData> InventoryData = new();
+        public WeaponData WeaponData = new();
+        public List<ItemData> ItemData = new();
     }
 
     public class CharacterData
@@ -78,16 +77,13 @@ public class SaveManager : MonoBehaviour
         foreach (var inventoryData in worldData.InventoryData)
         {
             var info = _items.Find(i => i.Id == inventoryData.InfoId);
-            var item = new InventoryItem(info);
-            item.State.Amount = inventoryData.Amount;
+            var item = new InventoryItem(info, inventoryData.Amount);
             inventory.TryAdd(item);
         }
         
-        var weaponSlot = inventory.GetWeaponSlot();
+        var weaponSlot = inventory.GetSlotWithType(ItemType.Weapon);
         var weaponInfo = _items.Find(i => i.Id == worldData.WeaponData.InfoId);
         var weaponItem = new InventoryItem(weaponInfo);
-        weaponItem.State.Amount = 1;
-        weaponItem.State.isEquipped = true;
         weaponSlot.SetItem(weaponItem);
 
         var uiInventory = ServiceLocator.Current.Get<UIInventory>();
@@ -104,6 +100,7 @@ public class SaveManager : MonoBehaviour
             var info = _items.Find(i => i.Id == data.InfoId);
             var item = spawnerItems.SpawnItem();
             item.SetData(data, info);
+            item.Init();
         }
     }
     

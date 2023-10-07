@@ -102,6 +102,7 @@ public class Monster : MonoBehaviour, IDamageable
         
         var item = spawnerItems.SpawnItem();
         item.SetData(data, drop.Info);
+        item.Init();
     }
 
     public SaveManager.MonsterData GetData()

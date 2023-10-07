@@ -1,7 +1,8 @@
 ﻿public interface IInventoryItem
 {
-    IInventoryItemInfo Info { get; }
-    IInventoryItemState State { get; }
+    public IInventoryItemInfo Info { get; }
+    public int Amount { get; }
+    public string Id { get; }
 
-    string Id { get; }
+    public void AddAmount(int value);
 }

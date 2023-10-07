@@ -9,8 +9,7 @@ public class StartGame : MonoBehaviour
     [SerializeField] private Character _character;
     [SerializeField] private RangeWeapon _rangeWeapon;
     [SerializeField] private Joystick _joystick;
-
-    [SerializeField] private CharacterMoverAndRotater _mover;
+    
     [SerializeField] private HealthBar _healthBar;
     [SerializeField] private AmmoUI _ammoUI;
     [SerializeField] private UIInventory _uiInventory;
@@ -23,7 +22,7 @@ public class StartGame : MonoBehaviour
     private void Awake()
     {
         _eventBus = new EventBus();
-        
+
         RegisterServices();
         Init();
         _save.Load();
@@ -51,7 +50,6 @@ public class StartGame : MonoBehaviour
         _ammoUI.Init();
         _character.Init();
         _rangeWeapon.Init();
-        _mover.Init();
         _uiInventory.Init();
         _spawnerMonsters.Init();
         _spawnerItems.Init();

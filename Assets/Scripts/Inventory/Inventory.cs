@@ -3,56 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Inventory : IInventory
+public class Inventory
 {
-    public Action OnInventoryStateChangedEvent;
-
-    public int Capacity { get; set; }
-    public bool IsFull => _slots.All(slot => !slot.IsEmpty);
-
+    private readonly int _capacity;
     private readonly List<IInventorySlot> _slots;
-
-    private readonly IInventorySlot _weaponSlot;
+    private readonly List<IInventorySlot> _equipSlots;
+    
+    public int Capacity => _capacity;
+    
+    public Action OnInventoryStateChangedEvent;
 
     public Inventory(int capacity)
     {
-        Capacity = capacity;
+        _capacity = capacity;
 
-        _slots = new List<IInventorySlot>(Capacity);
+        _slots = new List<IInventorySlot>(_capacity);
 
-        for (var i = 0; i < Capacity; i++)
+        for (var i = 0; i < _capacity; i++)
         {
-            _slots.Add(new InventorySlot());
+            _slots.Add(new InventorySlot(ItemType.Default));
         }
 
-        _weaponSlot = new InventorySlot();
+        _equipSlots = new List<IInventorySlot>()
+        {
+            new InventorySlot(ItemType.Weapon),
+            new InventorySlot(ItemType.Hat)
+        };
     }
     
-    public IInventoryItem GetItem(string itemId)
-    {
-        return _slots.Find(slot => slot.ItemId == itemId).Item;
-    }
-
-    public IInventoryItem[] GetAllItems()
-    {
-        var allItems = new List<IInventoryItem>();
-        foreach (var slot in _slots)
-        {
-            if (!slot.IsEmpty)
-            {
-                allItems.Add(slot.Item);
-            }
-        }
-        
-        return allItems.ToArray();
-    }
-
     public bool TryAdd(IInventoryItem item)
     {
-        var slotWitchSameItemButNotEmpty = _slots.Find(slot => !slot.IsEmpty && slot.ItemId == item.Id && item.Info.Stackable);
+        var slotWithSameItemButNotEmpty = _slots.Find(slot => !slot.IsEmpty && slot.ItemId == item.Id && item.Info.Stackable);
 
-        if (slotWitchSameItemButNotEmpty != null)
-            return TryToAddToSlot(slotWitchSameItemButNotEmpty, item);
+        if (slotWithSameItemButNotEmpty != null)
+            return TryToAddToSlot(slotWithSameItemButNotEmpty, item);
 
         var emptySlot = _slots.Find(slot => slot.IsEmpty);
 
@@ -70,7 +54,7 @@ public class Inventory : IInventory
         }
         else
         {
-            slot.Item.State.Amount += item.State.Amount;
+            slot.Item.AddAmount(item.Amount);
         }
         
         OnInventoryStateChangedEvent?.Invoke();
@@ -98,13 +82,7 @@ public class Inventory : IInventory
         }
     }
 
-    public bool HasItem(string itemId, out IInventoryItem item)
-    {
-        item = GetItem(itemId);
-        return item != null;
-    }
-
-    public void AddEquip(int index)
+    public void EquipItem(int index)
     {
         var slot = _slots[index];
         
@@ -118,34 +96,35 @@ public class Inventory : IInventory
         if (!equippable)
             return;
 
-        if (item.Info.Type != ItemType.Weapon) 
-            return;
+        var slotWithSameItemType = _equipSlots.Find(equipSlot => equipSlot.Type == item.Info.Type);
         
-        if (!_weaponSlot.IsEmpty)
+        if (slotWithSameItemType != null)
+            TryToEquip(slot, slotWithSameItemType);
+    }
+    
+    private void TryToEquip(IInventorySlot slot, IInventorySlot equipSlot)
+    {
+        if (equipSlot.IsEmpty)
         {
-            var currentItem = _weaponSlot.Item;
-            _weaponSlot.SetItem(item);
-            _weaponSlot.Item.State.isEquipped = true;
-            slot.SetItem(currentItem);
-            slot.Item.State.isEquipped = false;
+            equipSlot.SetItem(slot.Item);
+            slot.Clear();
         }
         else
         {
-            _weaponSlot.SetItem(item);
-            _weaponSlot.Item.State.isEquipped = true;
-            slot.Clear();
+            var currentItem = equipSlot.Item;
+            equipSlot.SetItem(slot.Item);
+            slot.SetItem(currentItem);
         }
-
-        var weaponRange = ServiceLocator.Current.Get<RangeWeapon>();
         
+        var weaponRange = ServiceLocator.Current.Get<RangeWeapon>();
         weaponRange.UpdateData();
         
         OnInventoryStateChangedEvent?.Invoke();
     }
 
-    public IInventorySlot GetWeaponSlot()
+    public IInventorySlot GetSlotWithType(ItemType type)
     {
-        return _weaponSlot;
+        return _equipSlots.Find(equipSlot => equipSlot.Type == type);
     }
 
     public IInventorySlot[] GetAllSlot()
@@ -156,10 +135,5 @@ public class Inventory : IInventory
     public IInventorySlot[] GetAllSlotIsNotEmpty()
     {
         return _slots.FindAll(slot => !slot.IsEmpty).ToArray();
-    }
-
-    private IInventorySlot GetSlot(string itemId)
-    {
-        return _slots.Find(slot => !slot.IsEmpty && slot.ItemId == itemId);
     }
 }

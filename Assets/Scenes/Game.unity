@@ -90603,7 +90603,6 @@ MonoBehaviour:
   _character: {fileID: 1982230833}
   _rangeWeapon: {fileID: 1725986285}
   _joystick: {fileID: 1898664146}
-  _mover: {fileID: 1982230834}
   _healthBar: {fileID: 1794077400}
   _ammoUI: {fileID: 2048435182}
   _uiInventory: {fileID: 1503866591}
@@ -92645,17 +92644,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4e4dc5baf2aa9e47b3a943873b9177e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1982230834 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6932865797921734372, guid: dbfe108f4c10c014db385ba2cc052d58, type: 3}
-  m_PrefabInstance: {fileID: 3524294822693166832}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a8c65e261aa0d14da961e581aad8534, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2048435178
 GameObject:
   m_ObjectHideFlags: 0
@@ -92961,21 +92949,13 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1725986285, guid: dbfe108f4c10c014db385ba2cc052d58, type: 3}
-      propertyPath: _data
-      value: 
-      objectReference: {fileID: 11400000, guid: a6c102963efce84458c1d6b9609d75e5, type: 2}
-    - target: {fileID: 263157991459105732, guid: dbfe108f4c10c014db385ba2cc052d58, type: 3}
-      propertyPath: _capacityInventory
-      value: 16
-      objectReference: {fileID: 0}
     - target: {fileID: 882918633692048303, guid: dbfe108f4c10c014db385ba2cc052d58, type: 3}
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 882918633692048303, guid: dbfe108f4c10c014db385ba2cc052d58, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.75
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 882918633692048303, guid: dbfe108f4c10c014db385ba2cc052d58, type: 3}
       propertyPath: m_LocalPosition.y
@@ -93013,6 +92993,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8003394421086655109, guid: dbfe108f4c10c014db385ba2cc052d58, type: 3}
+      propertyPath: _weapon
+      value: 
+      objectReference: {fileID: 1725986281}
     - target: {fileID: 8803045106271300215, guid: dbfe108f4c10c014db385ba2cc052d58, type: 3}
       propertyPath: m_Name
       value: Character

@@ -1,11 +1,10 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class RangeWeapon : MonoBehaviour, IService
 {
-    [SerializeField] private WeaponInfo _data;
+    [SerializeField] private WeaponInfo _info;
     [SerializeField] private SpriteRenderer _weaponSkin;
     [SerializeField] private Projectile _projectileTemplate;
     [SerializeField] private ForceMode2D _forceMode = ForceMode2D.Impulse;
@@ -17,7 +16,7 @@ public class RangeWeapon : MonoBehaviour, IService
     private bool _isReloading;
     private Transform _muzzle;
     private Inventory _inventory;
-
+    private Coroutine _reloadCoroutine;
     private EventBus _eventBus;
 
     public void Init()
@@ -25,10 +24,8 @@ public class RangeWeapon : MonoBehaviour, IService
         _eventBus = ServiceLocator.Current.Get<EventBus>();
         _inventory = ServiceLocator.Current.Get<Character>().Inventory;
 
-        var slot = _inventory.GetWeaponSlot();
-        var item = new InventoryItem(_data);
-        item.State.Amount = 1;
-        item.State.isEquipped = true;
+        var slot = _inventory.GetSlotWithType(ItemType.Weapon);
+        var item = new InventoryItem(_info);
         slot.SetItem(item);
         
         UpdateData();
@@ -56,33 +53,33 @@ public class RangeWeapon : MonoBehaviour, IService
         PerformAttack();
         
         _currentAmmo--;
-        _eventBus.Invoke(new AmmoChangedSignal(_currentAmmo, _data.Ammo));
-        _currentFireRateTime = _data.FireRate;
+        _eventBus.Invoke(new AmmoChangedSignal(_currentAmmo, _info.Ammo));
+        _currentFireRateTime = _info.FireRate;
     }
     
     private void PerformAttack()
     {
         var projectile = Instantiate(_projectileTemplate, _muzzle.position, _muzzle.rotation);
 
-        projectile.Init(_data.Damage);
+        projectile.Init(_info.Damage);
         
         projectile.Rigidbody.AddForce(_muzzle.right * _force, _forceMode);
     }
     
     public void SetReload()
     {
-        StartCoroutine(Reload());
+        _reloadCoroutine = StartCoroutine(Reload());
     }
     
     private IEnumerator Reload()
     {
-        if (_currentAmmo == _data.Ammo) 
+        if (_currentAmmo == _info.Ammo) 
             yield break;
         
         _isReloading = true;
-        yield return new WaitForSeconds(_data.ReloadTime); 
-        _currentAmmo = _data.Ammo;
-        _eventBus.Invoke(new AmmoChangedSignal(_currentAmmo, _data.Ammo));
+        yield return new WaitForSeconds(_info.ReloadTime); 
+        _currentAmmo = _info.Ammo;
+        _eventBus.Invoke(new AmmoChangedSignal(_currentAmmo, _info.Ammo));
         _isReloading = false;
     }
 
@@ -93,11 +90,17 @@ public class RangeWeapon : MonoBehaviour, IService
 
     public void UpdateData()
     {
-        _data = (WeaponInfo)_inventory.GetWeaponSlot().Item.Info;
+        if (_reloadCoroutine != null)
+        {
+            StopCoroutine(_reloadCoroutine);
+            _isReloading = false;
+        }
         
-        _currentAmmo = _data.Ammo;
-        _currentFireRateTime = _data.FireRate;
-        _weaponSkin.sprite = _data.SpriteIcon;
+        _info = (WeaponInfo)_inventory.GetSlotWithType(ItemType.Weapon).Item.Info;
+
+        _currentAmmo = _info.Ammo;
+        _currentFireRateTime = _info.FireRate;
+        _weaponSkin.sprite = _info.SpriteIcon;
         
         if (_muzzle == null)
         {
@@ -105,16 +108,16 @@ public class RangeWeapon : MonoBehaviour, IService
             _muzzle.parent = _weaponSkin.transform;
         }
         
-        _muzzle.localPosition = _data.Muzzle;
+        _muzzle.localPosition = _info.Muzzle;
         
-        _eventBus.Invoke(new AmmoChangedSignal(_currentAmmo, _data.Ammo));
+        _eventBus.Invoke(new AmmoChangedSignal(_currentAmmo, _info.Ammo));
     }
     
     public SaveManager.WeaponData GetData()
     {
         var data = new SaveManager.WeaponData()
         {
-            InfoId = _data.Id,
+            InfoId = _info.Id,
             Ammo = _currentAmmo,
             FireRateTime = _currentFireRateTime
         };

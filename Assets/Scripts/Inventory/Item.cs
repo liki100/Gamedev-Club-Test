@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,22 +6,22 @@ public class Item : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer _skin; 
     
-    private ItemInfo _info;
+    private DefaultItemInfo _info;
     private int _amount;
     private EventBus _eventBus;
 
-    private void Start()
+    public void Init()
     {
+        _eventBus = ServiceLocator.Current.Get<EventBus>();
         _skin.sprite = _info.SpriteIcon;
     }
-
+    
     private void OnTriggerEnter2D(Collider2D collider)
     {
         if (collider.TryGetComponent(out Character character))
         {
-            var item = new InventoryItem(_info);
-            item.State.Amount = _amount;
-            
+            var item = new InventoryItem(_info, _amount);
+
             if (!character.Inventory.TryAdd(item)) 
                 return;
             
@@ -43,14 +42,10 @@ public class Item : MonoBehaviour
         return data;
     }
 
-    public void SetData(SaveManager.ItemData data, ItemInfo info)
+    public void SetData(SaveManager.ItemData data, DefaultItemInfo info)
     {
         _info = info;
         _amount = data.Amount;
         transform.position = data.Position;
-
-        _eventBus = ServiceLocator.Current.Get<EventBus>();
-        
-        _skin.sprite = _info.SpriteIcon;
     }
 }

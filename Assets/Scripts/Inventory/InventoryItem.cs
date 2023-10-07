@@ -1,15 +1,19 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class InventoryItem : IInventoryItem
 {
     public IInventoryItemInfo Info { get; }
-    public IInventoryItemState State {get;}
+    public int Amount { get; private set; }
     public string Id => Info.Id;
-    
-    public InventoryItem(IInventoryItemInfo info)
+
+    public InventoryItem(IInventoryItemInfo info, int amount = 1)
     {
         Info = info;
-        State = new InventoryItemState();
+        Amount = amount;
+    }
+    
+    public void AddAmount(int value)
+    {
+        Amount += value;
     }
 }

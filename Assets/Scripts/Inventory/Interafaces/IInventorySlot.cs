@@ -1,10 +1,9 @@
-﻿using System;
-
-public interface IInventorySlot
+﻿public interface IInventorySlot
 {
     bool IsEmpty { get; }
     
     IInventoryItem Item { get; }
+    ItemType Type { get; }
     string ItemId { get; }
     int Amount { get; }
 

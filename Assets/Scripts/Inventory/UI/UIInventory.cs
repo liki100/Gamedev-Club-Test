@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class UIInventory : MonoBehaviour, IService
@@ -45,7 +43,7 @@ public class UIInventory : MonoBehaviour, IService
             uiSlot.Button.onClick.AddListener(() => OnSelected(index));
             uiSlot.Refresh();
         }
-        _uiWeaponSlot.SetSlot(_inventory.GetWeaponSlot());
+        _uiWeaponSlot.SetSlot(_inventory.GetSlotWithType(ItemType.Weapon));
         _uiWeaponSlot.Refresh();
     }
 
@@ -104,7 +102,7 @@ public class UIInventory : MonoBehaviour, IService
 
     private void OnEquipClick(int index)
     {
-        _inventory.AddEquip(index);
+        _inventory.EquipItem(index);
         _equipButton.onClick.RemoveAllListeners();
         OnInventoryStateChanged();
     }
