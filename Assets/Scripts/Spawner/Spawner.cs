@@ -20,13 +20,11 @@ public class Spawner : MonoBehaviour, IService
     {
         _eventBus = ServiceLocator.Current.Get<EventBus>();
         _eventBus.Subscribe<MonsterDeadSignal>(MonsterDead);
-
-        SpawnNumberMonsters();
+        _monsters = new List<Monster>();
     }
 
     public void SpawnNumberMonsters()
     {
-        _monsters = new List<Monster>();
         for (var i = 0; i < _spawnCount; i++)
         {
             var monster = CreateMonsters();

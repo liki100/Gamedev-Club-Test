@@ -22,11 +22,11 @@ public class UIInventory : MonoBehaviour, IService
         _inventory.OnInventoryStateChangedEvent += OnInventoryStateChanged;
 
         _uiSlots = new List<UIInventorySlot>();
-        
-        UpdateData();
+
+        CreateUISlot();
     }
 
-    public void UpdateData()
+    private void CreateUISlot()
     {
         for (var i = 0; i < _inventory.Capacity; i++)
         {
@@ -45,16 +45,6 @@ public class UIInventory : MonoBehaviour, IService
         }
         _uiWeaponSlot.SetSlot(_inventory.GetSlotWithType(ItemType.Weapon));
         _uiWeaponSlot.Refresh();
-    }
-
-    public void Clear()
-    {
-        foreach (var slot in _uiSlots)
-        {
-            slot.Button.onClick.RemoveAllListeners();
-            Destroy(slot.gameObject);
-        }
-        _uiSlots.Clear();
     }
 
     private void OnEnable()

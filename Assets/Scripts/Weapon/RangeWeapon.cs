@@ -23,12 +23,6 @@ public class RangeWeapon : MonoBehaviour, IService
     {
         _eventBus = ServiceLocator.Current.Get<EventBus>();
         _inventory = ServiceLocator.Current.Get<Character>().Inventory;
-
-        var slot = _inventory.GetSlotWithType(ItemType.Weapon);
-        var item = new InventoryItem(_info);
-        slot.SetItem(item);
-        
-        UpdateData();
     }
 
     private void Update()
@@ -129,6 +123,14 @@ public class RangeWeapon : MonoBehaviour, IService
     {
         _currentAmmo = data.Ammo;
         _currentFireRateTime = data.FireRateTime;
+        UpdateData();
+    }
+
+    public void DefaultData()
+    {
+        var slot = _inventory.GetSlotWithType(ItemType.Weapon);
+        var item = new InventoryItem(_info);
+        slot.SetItem(item);
         UpdateData();
     }
 }

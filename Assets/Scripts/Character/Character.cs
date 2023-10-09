@@ -16,10 +16,8 @@ public class Character : MonoBehaviour, IDamageable, IService
 
     public void Init()
     {
-        _currentHealth = _health;
         _inventory = new Inventory(_capacityInventory);
         _eventBus = ServiceLocator.Current.Get<EventBus>();
-        _eventBus.Invoke(new CharacterHealthChangedSignal(_currentHealth/_health));
     }
 
     public void ApplyDamage(float damage)
@@ -44,7 +42,7 @@ public class Character : MonoBehaviour, IDamageable, IService
     {
         var data = new SaveManager.CharacterData()
         {
-            Health = _health,
+            Health = _currentHealth,
             Position = transform.position
         };
         
@@ -55,6 +53,12 @@ public class Character : MonoBehaviour, IDamageable, IService
     {
         transform.position = data.Position;
         _currentHealth = data.Health;
+        _eventBus.Invoke(new CharacterHealthChangedSignal(_currentHealth/_health));
+    }
+
+    public void DefaultData()
+    {
+        _currentHealth = _health;
         _eventBus.Invoke(new CharacterHealthChangedSignal(_currentHealth/_health));
     }
 }

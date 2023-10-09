@@ -53,18 +53,27 @@ public class SaveManager : MonoBehaviour
 
     public void Load()
     {
+        var character = ServiceLocator.Current.Get<Character>();
+        var spawner = ServiceLocator.Current.Get<Spawner>();
+        var weapon = ServiceLocator.Current.Get<RangeWeapon>();
+        
         if (!File.Exists(Application.persistentDataPath + PATH))
+        {
+            character.DefaultData();
+            spawner.SpawnNumberMonsters();
+            weapon.DefaultData();
             return;
+        }
         
         var worldData = JsonConvert.DeserializeObject<WorldData>(File.ReadAllText(Application.persistentDataPath + PATH));
 
         if (worldData == null)
             return;
-
-        var character = ServiceLocator.Current.Get<Character>();
+        
+        //CHARACTER
         character.SetData(worldData.CharacterData);
-
-        var spawner = ServiceLocator.Current.Get<Spawner>();
+        
+        //SPAWNER
         spawner.DeleteMonsters();
         foreach (var monsterData in worldData.MonstersData)
         {
@@ -72,6 +81,7 @@ public class SaveManager : MonoBehaviour
             monster.SetData(monsterData);
         }
         
+        //INVENTORY
         var inventory = character.Inventory;
         inventory.Clear();
         foreach (var inventoryData in worldData.InventoryData)
@@ -81,18 +91,16 @@ public class SaveManager : MonoBehaviour
             inventory.TryAdd(item);
         }
         
+        //WEAPON SLOT
         var weaponSlot = inventory.GetSlotWithType(ItemType.Weapon);
         var weaponInfo = _items.Find(i => i.Id == worldData.WeaponData.InfoId);
         var weaponItem = new InventoryItem(weaponInfo);
         weaponSlot.SetItem(weaponItem);
 
-        var uiInventory = ServiceLocator.Current.Get<UIInventory>();
-        uiInventory.Clear();
-        uiInventory.UpdateData();
-
-        var weapon = ServiceLocator.Current.Get<RangeWeapon>();
+        //WEAPON
         weapon.SetData(worldData.WeaponData);
 
+        //SPAWNER ITEM
         var spawnerItems = ServiceLocator.Current.Get<SpawnerItems>();
         spawnerItems.DeleteItems();
         foreach (var data in worldData.ItemData)
